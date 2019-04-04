@@ -8,6 +8,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const validateBearerToken = require('./validateBearerToken');
 const { NODE_ENV } = require('./config');
+const errorHandler = require('./error-handling');
 
 const app = express();
 
@@ -22,15 +23,6 @@ app.use(validateBearerToken());
 
 app.use(router);
 
-app.use(function errorHandler(error, req, res, next) {
-  let response;
-  if (NODE_ENV === 'production') {
-    response = { error: {message: 'server error' }};
-  } else {
-    console.error(error);
-    response = { message: error.message, error };
-  }
-  res.status(500).json(response);
-});
+app.use(errorHandler);
 
 module.exports = app;
